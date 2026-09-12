@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gonzalo Fuenzalida — Sound Designer & Audio Engineer</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png">
+<link rel="icon" type="image/png" sizes="512x512" href="favicon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0D0C;
+    --surface:#14171A;
+    --surface-2:#1A1F1C;
+    --hairline:#262B29;
+    --text:#ECEFEC;
+    --muted:#8A9490;
+    --signal:#6FFFB0;
+    --amber:#FF8A3D;
+    --rail-w:236px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--signal);color:#0B0D0C;}
+  a{color:inherit;}
+
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  h1,h2,h3{
+    font-family:'Sora',sans-serif;
+    margin:0;
+    line-height:1.08;
+  }
+
+  .lang-toggle{
+    position:fixed;
+    top:24px; right:32px;
+    z-index:60;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--text);
+    background:var(--bg);
+    border:1px solid var(--hairline);
+    padding:10px 16px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:border-color .2s ease, color .2s ease;
+  }
+  .lang-toggle:hover{border-color:var(--signal); color:var(--signal);}
+  @media (max-width:880px){
+    .lang-toggle{top:70px; right:14px; font-size:.62rem; padding:7px 12px;}
+  }
+
+  /* ---------- rail nav ---------- */
+  .rail{
+    position:fixed;
+    top:0; left:0;
+    width:var(--rail-w);
+    height:100vh;
+    border-right:1px solid var(--hairline);
+    padding:28px 22px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    z-index:50;
+    background:var(--bg);
+  }
+  .rail-top .mark{
+    font-family:'Sora',sans-serif;
+    font-weight:700;
+    font-size:1.0rem;
+    letter-spacing:.01em;
+  }
+  .rail-top .mark span{color:var(--signal);}
+  .rail-top .role{
+    margin-top:6px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.66rem;
+    color:var(--muted);
+    letter-spacing:.03em;
+    line-height:1.5;
+  }
+  .channels{
+    list-style:none;
+    margin:36px 0 0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .channels a{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-decoration:none;
+    padding:9px 8px;
+    border-radius:6px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.72rem;
+    color:var(--muted);
+    letter-spacing:.03em;
+    transition:color .2s ease, background .2s ease;
+  }
+  .channels a .num{color:var(--muted); min-width:34px; font-weight:500;}
+  .channels a .meter{
+    width:3px; height:14px; border-radius:2px;
+    background:var(--hairline);
+    transition:background .2s ease, height .2s ease;
+  }
+  .channels a:hover{color:var(--text); background:var(--surface);}
+  .channels a.active{color:var(--text); background:var(--surface);}
+  .channels a.active .num{color:var(--signal);}
+  .channels a.active .meter{background:var(--signal); height:18px;}
+
+  .rail-bottom{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.64rem;
+    color:var(--muted);
+    line-height:1.6;
+  }
+  .rail-bottom .dot{
+    display:inline-block; width:6px; height:6px; border-radius:50%;
+    background:var(--signal); margin-right:6px;
+    box-shadow:0 0 8px var(--signal);
+  }
+
+  /* ---------- main ---------- */
+  main{margin-left:var(--rail-w);}
+
+  .hero{
+    position:relative;
+    min-height:70vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:0 60px;
+    overflow:hidden;
+    border-bottom:1px solid var(--hairline);
+  }
+  #scope{
+    position:absolute;
+    inset:0;
+    width:100%; height:100%;
+    opacity:.45;
+  }
+  .hero-inner{position:relative; z-index:2; max-width:1040px;}
+  .hero .eyebrow{margin-bottom:18px;}
+  .hero h1{
+    font-size:clamp(2.3rem, 5vw, 4.2rem);
+    font-weight:700;
+  }
+  .hero-subtitle{
+    margin:14px 0 0;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.85rem;
+    letter-spacing:.04em;
+    color:var(--muted);
+  }
+
+  .section{
+    padding:96px 60px;
+    border-bottom:1px solid var(--hairline);
+  }
+  .section.section-light{
+    --text:#14171A;
+    --muted:#5B615D;
+    --hairline:#E4E0D5;
+    --signal:#1F8F5E;
+    background:#F5F3EE;
+    color:var(--text);
+  }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:16px;
+    margin-bottom:44px;
+  }
+  .section-head .chnum{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.78rem;
+    color:var(--signal);
+    letter-spacing:.06em;
+  }
+  .section-head h2{font-size:clamp(1.6rem,3vw,2.2rem);}
+  .section-sub{
+    color:var(--muted);
+    max-width:600px;
+    margin:14px 0 0;
+    line-height:1.65;
+    font-size:.96rem;
+  }
+
+  .reels-grid{
+    display:flex;
+    flex-direction:column;
+    gap:48px;
+    margin-bottom:32px;
+  }
+  .reel-card{max-width:900px;}
+  .reel-card h3{font-size:1rem; margin-bottom:14px;}
+  .reel-card video{
+    width:100%; border-radius:12px; border:1px solid var(--hairline);
+    display:block; background:#000;
+  }
+  .reel-desc{
+    color:var(--muted);
+    font-size:.88rem;
+    line-height:1.6;
+    margin:14px 0 0;
+  }
+  .reel-desc p{margin:0 0 12px; text-align:justify;}
+  .reel-desc p:last-child{margin-bottom:0;}
+  .reel-track{
+    margin-top:18px;
+    border-top:1px solid var(--hairline);
+    padding-top:16px;
+  }
+  .reel-track .tgenre{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.66rem;
+    color:var(--signal);
+    letter-spacing:.04em;
+    margin-bottom:8px;
+  }
+  .reel-track audio{
+    width:100%; height:34px;
+    filter:invert(1) sepia(1) saturate(3) hue-rotate(100deg) brightness(0.9);
+  }
+
+  /* ---------- proyectos / trabajo ---------- */
+  .group-title{
+    font-size:1.05rem;
+    font-weight:600;
+    margin:40px 0 8px;
+    padding-top:32px;
+    border-top:1px solid var(--hairline);
+  }
+  .pack-card{
+    border:1px solid var(--hairline);
+    border-radius:14px;
+    padding:34px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:32px;
+    background:linear-gradient(160deg,var(--surface),var(--surface-2));
+    margin-bottom:32px;
+  }
+  .pack-card h3{font-size:1.25rem; margin-bottom:10px;}
+  .pack-card p{color:var(--muted); max-width:440px; line-height:1.6; font-size:.92rem;}
+  .btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.76rem;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    text-decoration:none;
+    padding:14px 22px;
+    border-radius:8px;
+    white-space:nowrap;
+    display:inline-block;
+    min-width:190px;
+    text-align:center;
+  }
+  .btn-amber{background:var(--amber); color:#1a0f04; font-weight:600;}
+  .btn-pink{background:#D98BA6; color:#2a0f18; font-weight:600;}
+  .btn-orange{background:#C97A45; color:#2a1608; font-weight:600;}
+  .btn-outline{border:1px solid var(--hairline); color:var(--text);}
+  @media (max-width:640px){ .pack-card{flex-direction:column; align-items:flex-start;} }
+
+  .track-group{
+    margin-bottom:32px;
+    border:1px solid var(--hairline);
+    border-radius:12px;
+    padding:24px;
+  }
+  .track-group .tracks{margin:0;}
+  .track-group .reel-desc{margin-top:16px;}
+  .tracks{
+    display:flex;
+    flex-direction:column;
+    gap:1px;
+    background:var(--hairline);
+    border:1px solid var(--hairline);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  .track{
+    background:var(--surface);
+    padding:20px 22px;
+    display:grid;
+    grid-template-columns:48px 1fr 220px;
+    align-items:center;
+    gap:18px;
+  }
+  .track .tnum{font-family:'IBM Plex Mono',monospace; color:var(--muted); font-size:.8rem;}
+  .track .tmeta h3{font-size:.94rem; font-weight:600; color:var(--text); font-family:'Inter',sans-serif;}
+  .track .tmeta .tgenre{
+    font-family:'IBM Plex Mono',monospace; font-size:.66rem; color:var(--muted);
+    letter-spacing:.04em; margin-top:3px;
+  }
+  .track audio{
+    width:100%; height:34px;
+    filter:invert(1) sepia(1) saturate(3) hue-rotate(100deg) brightness(0.9);
+  }
+  @media (max-width:680px){
+    .track{grid-template-columns:1fr; text-align:left;}
+    .track audio{max-width:100%;}
+  }
+
+  /* ---------- credenciales ---------- */
+  .creds-list{
+    display:flex;
+    flex-direction:column;
+  }
+  .creds-item{
+    padding:20px 0;
+    border-top:1px solid var(--hairline);
+  }
+  .creds-item:last-child{border-bottom:1px solid var(--hairline);}
+  .creds-item-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+  .creds-item .creds-org{
+    font-family:'Sora',sans-serif;
+    font-size:1rem;
+    font-weight:600;
+  }
+  .creds-item .creds-role{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.74rem;
+    color:var(--muted);
+    letter-spacing:.02em;
+  }
+  .creds-item .creds-date{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.7rem;
+    color:var(--signal);
+    letter-spacing:.03em;
+    margin-left:auto;
+  }
+  .creds-item .creds-desc{
+    margin:10px 0 0;
+    color:var(--muted);
+    font-size:.88rem;
+    line-height:1.6;
+    max-width:640px;
+  }
+
+  /* ---------- sobre mí ---------- */
+  .perfil-grid{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:60px;
+  }
+  .perfil-grid p{color:var(--muted); line-height:1.75; margin:0 0 16px; font-size:.98rem; text-align:justify;}
+  .quick-facts{
+    display:flex; flex-direction:column; gap:18px;
+    border-left:1px solid var(--hairline);
+    padding-left:28px;
+  }
+  .quick-facts .f-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.66rem; color:var(--signal); letter-spacing:.06em;
+  }
+  .quick-facts .f-val{font-size:.92rem; margin-top:4px; line-height:1.5;}
+  @media (max-width:800px){
+    .perfil-grid{grid-template-columns:1fr;}
+    .quick-facts{border-left:none; padding-left:0; border-top:1px solid var(--hairline); padding-top:20px;}
+  }
+
+  /* ---------- contacto ---------- */
+  .contact-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+    gap:1px;
+    background:var(--hairline);
+    border:1px solid var(--hairline);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  .contact-item{ background:var(--surface); padding:24px; }
+  .contact-item .eyebrow{margin-bottom:10px;}
+  .contact-item a, .contact-item span{
+    font-family:'Sora',sans-serif;
+    font-size:.94rem;
+    font-weight:600;
+    text-decoration:none;
+  }
+
+  footer{
+    padding:30px 60px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.66rem;
+    color:var(--muted);
+    display:flex;
+    justify-content:space-between;
+  }
+
+  /* ---------- mobile rail ---------- */
+  @media (max-width:880px){
+    .rail{
+      position:fixed; top:0; left:0; right:0; width:100%; height:auto;
+      flex-direction:row; align-items:center;
+      padding:14px 18px;
+      border-right:none;
+      border-bottom:1px solid var(--hairline);
+      background:var(--bg);
+    }
+    .rail-top .role{display:none;}
+    .channels{ flex-direction:row; margin:0 0 0 auto; overflow-x:auto; gap:2px; }
+    .channels a{padding:8px 10px;}
+    .channels a span.label{display:none;}
+    .rail-bottom{display:none;}
+    main{margin-left:0; padding-top:64px;}
+    .hero{padding:0 24px;}
+    .section{padding:64px 24px;}
+  }
+</style>
+</head>
+<body>
+
+  <button id="langToggle" class="lang-toggle" aria-label="Switch to Spanish">EN</button>
+
+  <nav class="rail">
+    <div class="rail-top">
+      <div class="mark">GONZALO <span>F.</span></div>
+      <div class="role" data-es='DISEÑADOR DE SONIDO E<br>INGENIERO DE AUDIO'>SOUND DESIGNER &amp;<br>AUDIO ENGINEER</div>
+    </div>
+    <ul class="channels">
+      <li><a href="#ch01" class="ch-link" data-ch="ch01"><span class="meter"></span><span class="label" data-es="TRABAJO">WORK</span></a></li>
+      <li><a href="#ch02" class="ch-link" data-ch="ch02"><span class="meter"></span><span class="label" data-es="TRAYECTORIA">TRAJECTORY</span></a></li>
+      <li><a href="#ch03" class="ch-link" data-ch="ch03"><span class="meter"></span><span class="label" data-es="SOBRE MÍ">ABOUT</span></a></li>
+      <li><a href="#ch04" class="ch-link" data-ch="ch04"><span class="meter"></span><span class="label" data-es="CONTACTO">CONTACT</span></a></li>
+    </ul>
+    <div class="rail-bottom"><span class="dot"></span><span data-es="SEÑAL ACTIVA">SIGNAL ACTIVE</span></div>
+  </nav>
+
+  <main>
+    <header class="hero" id="top">
+      <canvas id="scope"></canvas>
+      <div class="hero-inner">
+        <div class="eyebrow" data-es="Diseñador de Sonido e Ingeniero de Audio · Santiago, Chile">Sound Designer &amp; Audio Engineer · Santiago, Chile</div>
+        <h1 data-es="Jugando con sonido todos los días.">Playing with sound every day.</h1>
+        <p class="hero-subtitle" data-es="Portafolio Web de Gonzalo Fuenzalida">Gonzalo Fuenzalida Web Portfolio</p>
+      </div>
+    </header>
+
+    <section class="section" id="ch01">
+      <div class="section-head">
+        <h2 data-es="Proyectos y Demos">Projects and Demos</h2>
+      </div>
+      <p class="section-sub" style="margin-bottom:40px;" data-es="Entro en mucho detalle describiendo el proceso de algunos de estos sonidos, pero no voy a hacerlo con cada uno acá, o esta sección se haría demasiado larga.">I go deep describing the process for some of these sounds, but I won't do that for every single one here, otherwise this section would get way too long.</p>
+
+      <div class="reels-grid">
+        <div class="reel-card">
+          <h3>Starcraft II - Sound Re Design</h3>
+          <div style="position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;border:1px solid var(--hairline);">
+            <iframe src="https://www.youtube.com/embed/8gNfotvtYsM?si=Ewgqf4cRtiBi-uMJ"
+              style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen></iframe>
+          </div>
+          <div class="reel-desc">
+            <p data-es="Rediseñé todo el sonido de esta parte del corte original, y compuse la música que suena durante toda la escena.">I redesigned all the sound for this part of the original cut, and composed the music that plays throughout.</p>
+            <p data-es='El sonido más divertido de hacer fue el de los Vikings (las naves al comienzo), sus motores fueron completamente sintetizados en Serum 2. El Viking que se detiene a dispararle al Ultralisk (la bestia) fue otro punto destacado, se construyó combinando en capas grabaciones de engranajes, golpes de metal, foley de latas, e impactos de librerías de EDM, sus ametralladoras fueron completamente sintetizadas en Serum 2. Para los Ultralisks usé gruñidos de distintos animales, estirados para que sonaran más pesados y les dieran esa sensación "alienígena". Los tanques combinan sonidos de engranajes, impactos cinematográficos, y foley de latas y golpes de metal. Usé los mismos elementos para el paso y los disparos, junto con grabaciones reales de disparos. Los Zerglings (las pequeñas criaturas que siguen al Ultralisk) mantienen los sonidos originales del juego. Para la criatura que emerge del suelo, combiné SFX de terremoto de librerías de EDM, foley de escombros, e impactos cinematográficos. Su rugido es un growl de dubstep bastante estirado para que sonara menos robótico y más orgánico.'>The funniest sound to make was the Vikings (the aircraft at the beginning), their engines were fully synthesized in Serum 2. The Viking that stops to shoot the Ultralisk (the beast) was another highlight, it was built by layering recordings of gears, metal hits, can foley, and impacts from EDM libraries, its machine guns were completely synthesized in Serum 2. For the Ultralisks, I used growls from different animals, stretched to sound heavier and give them that "alien" feel. The tanks combine gear sounds, cinematic impacts, foley of cans and metal hits. I used the same elements for the footstep and gunfire, along with real gunshot recordings. The Zerglings (the little creatures following the Ultralisk) keep the game's original sounds. For the creature emerging from the ground, I combined earthquake SFX from EDM libraries, debris foley, and cinematic impacts. Its roar is a dubstep growl stretched heavily to sound less robotic and more organic.</p>
+            <p data-es="La música también fue divertida de hacer. Mi plan original era dejar el rediseño sin música, pero cuando llegué a los últimos detalles me di cuenta de que le faltaba algo. Quise darle un aire tribal, ya que los Zerg (los alienígenas) son una facción completamente biológica en la saga. Esa es parte de la razón por la que agregué un didgeridoo a la pista.">The music was fun to make too. My original plan was to leave the redesign without a score, but once I got into final details I realized it needed one. I wanted a tribal feel, since the Zerg (the aliens) are a fully biological faction in the series. That's part of why I added a didgeridoo to the track.</p>
+          </div>
+          <div class="reel-track">
+            <div class="tgenre" data-es="CANCIÓN COMPUESTA PARA EL REEL">SONG COMPOSED FOR THE REEL</div>
+            <audio controls></audio>
+          </div>
+        </div>
+        <div class="reel-card">
+          <h3>Overwatch - Sound Re Design</h3>
+          <div style="position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;border:1px solid var(--hairline);">
+            <iframe src="https://www.youtube.com/embed/01NKOHtXOBc"
+              style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+              title="Overwatch - Sound Re Design"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen></iframe>
+          </div>
+          <div class="reel-desc">
+            <p data-es="Rediseñé todo el sonido de esta parte del corte original.">I redesigned all the sound for this part of the original cut.</p>
+            <p data-es="Debo decir que al principio me costó encontrar un buen sonido para el pájaro carpintero, instintivamente probé con grabaciones de madera siendo golpeada, que luego descarté, lo que hizo clic fue un sonido de percusión de una librería musical, lo combiné en capas con una caja que tenía un timbre similar, y luego agregué una muestra de disparo. Después le agregué a este grupo de sonidos un disperser, que es un plugin que apila filtros pasa-todo para difuminar y estirar los transientes. Siguiendo en la cadena del pájaro carpintero pusimos un Faturator de Kilohearts, que es un plugin de distorsión, este fue automatizado para estar activo solo en la última aparición del pájaro carpintero, para hacerlo más duro y darle al espectador la sensación de lo que Bastion (el robot) estaba escuchando. Usé el sintetizador Pigments para hacer los beeps que emite Bastion, capas de efectos de pisadas y partes de un SFX genérico de robot caminando para su movimiento. Para su transformación usé una combinación de sonidos de engranajes, foley de latas, piezas de metal, y efectos especiales de librerías musicales. La ametralladora fue el sonido que más disfruté hacer, de nuevo fue completamente sintetizada en Serum 2 y tiene dos capas, una enfocada en las frecuencias altas y otra en las bajas, cada una de estas dos capas tiene un disperser para hacer los transientes de la ametralladora más pesados. El crepitar de los árboles siendo disparados viene de grabaciones en capas de árboles cayendo y trozos de madera siendo disparados. Para la música agregé un drone simple de una librería musical, y para los ambientes usé grabaciones genéricas de bosque.">I must say that at first it was hard to nail a good sound for the woodpecker, I instinctively tried with recordings of wood being hit, which I discarded later, the thing that clicked was a percussion sound from a music library, I layered this with a snare that had a similar timbre, and then added a gunshot sample. I later put to this group of sounds a disperser, which is a plugin that stacks all-pass filters to smear and stretch transients. Next in the woodpecker chain we got a Faturator by Kilohearts, which is a distortion plugin, this one was automated to be active only at the last woodpecker appearance to make it harder and give the viewer the feeling of what Bastion (the robot) was hearing. I used Pigments synth to make the beeps emitted by Bastion, layers of stomp effects and pieces of a stock robot walking SFX for his movement. For his "transformation" I used a combination of gear sounds, foley of cans, metal pieces, and special effects from music libraries. The machine gun was the sound I enjoyed making the most, it was again fully synthesized in Serum 2 and has two layers, one focused on the high end and one on the low end, each of these two layers has a disperser to make the transients of the machine gun heavier. The crackling of the trees being shot comes from layered recordings of falling trees and wood pieces being shot. For the music I added a simple drone from a music library, and for ambiances I used stock forest recordings.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="group-title" data-es="Tracks con Temática">Tracks with Themes</h3>
+      <p class="section-sub" style="margin-bottom:24px;" data-es="Algunos tracks originales construidos en base a distintos temas y ambientes.">A few original tracks built around different themes and moods.</p>
+
+      <div class="track-group">
+        <div class="tracks">
+          <div class="track">
+            <span class="tnum">01</span>
+            <div class="tmeta">
+              <h3>A Place of Madness</h3>
+              <div class="tgenre" data-es="TERROR">HORROR</div>
+            </div>
+            <audio controls></audio>
+          </div>
+          <div class="track">
+            <span class="tnum">02</span>
+            <div class="tmeta">
+              <h3>Chained</h3>
+              <div class="tgenre" data-es="TERROR">HORROR</div>
+            </div>
+            <audio controls></audio>
+          </div>
+        </div>
+        <div class="reel-desc">
+          <p data-es='Debo decir que hice estas pensando mucho en Silent Hill, quería darles una sensación "dolorosa", y también quería que funcionaran como atmósferas y no solo como banda sonora, así que evité las melodías y me enfoqué más en la ambientación y las texturas.'>I must say I made these thinking a lot about Silent Hill, I wanted to give them a "painful feeling", and also wanted them to work as atmospheres and not soundtracks only, so I avoided melodies and focused more on ambiance and textures.</p>
+        </div>
+      </div>
+
+      <div class="track-group">
+        <div class="tracks">
+          <div class="track">
+            <span class="tnum">03</span>
+            <div class="tmeta">
+              <h3>Loading Screen</h3>
+              <div class="tgenre" data-es="MILITAR / GUERRA MODERNA">MILITARY / MODERN WAR</div>
+            </div>
+            <audio controls></audio>
+          </div>
+        </div>
+        <div class="reel-desc">
+          <p data-es="Esta pista se hizo basada en un concepto de videojuego RTS que era como Age of Empires pero con eras que iban desde la Guerra Fría hasta la guerra moderna, así que basé bastante la pista en los temas de las pantallas de carga de Battlefield 4.">This track was made based on an RTS video game concept that was like Age of Empires but with Cold War to Modern Warfare as eras, so I heavily based the track on Battlefield 4's loading screen themes.</p>
+        </div>
+      </div>
+
+      <div class="pack-card">
+        <div>
+          <h3>SoundCloud</h3>
+          <p data-es="Más de mi música, incluyendo lanzamientos que no están en esta página.">More of my music, including releases not featured on this page.</p>
+        </div>
+        <a class="btn btn-orange" href="https://soundcloud.com/4lliask" target="_blank" rel="noopener" data-es="Escuchar →">Listen →</a>
+      </div>
+
+      <div class="pack-card">
+        <div>
+          <h3>Free Brostep Sound Pack</h3>
+          <p data-es="Un pack de sonidos para producción de música EDM, inspirado en el sonido del brostep de los 2010s, hice más de 200 sonidos para este pack, casi todos están enfocados en el bajo.">A sound pack for EDM music production, it is inspired by the sound of 2010s brostep music, I made more than 200 sounds for this, almost all of them are bass driven.</p>
+        </div>
+        <a class="btn btn-pink" href="https://alliask.gumroad.com/l/eacwim" target="_blank" rel="noopener" data-es="Ver en Gumroad →">View on Gumroad →</a>
+      </div>
+
+    </section>
+
+    <section class="section" id="ch02">
+      <div class="section-head">
+        <h2 data-es="Trayectoria">Trajectory</h2>
+      </div>
+
+      <div class="creds-list">
+        <div class="creds-item">
+          <div class="creds-item-top">
+            <span class="creds-org">GOFOR Sostenibilidad</span>
+            <span class="creds-role" data-es="Ingeniero acústico de terreno">Field acoustic engineer</span>
+            <span class="creds-date">2025</span>
+          </div>
+          <p class="creds-desc" data-es="Mediciones acústicas, diagnósticos, e informes técnicos para obras de construcción, según el Decreto Supremo N°38/2011.">Acoustic measurements, diagnostics, and technical reports for construction sites, following Chilean Decree Supreme N°38/2011.</p>
+        </div>
+        <div class="creds-item">
+          <div class="creds-item-top">
+            <span class="creds-org">Criss Jael</span>
+            <span class="creds-role" data-es="Diseño de sonido — gira en vivo, Perú">Sound design — live tour, Peru</span>
+            <span class="creds-date">2024–2025</span>
+          </div>
+          <p class="creds-desc" data-es="Diseño de sonido para los shows en vivo del artista durante su gira en Perú, incluyendo diseño de FX, mezcla en vivo, y dirección creativa.">Sound design for the artist's live shows on tour in Peru, including FX design, live mixing, and creative direction.</p>
+        </div>
+        <div class="creds-item">
+          <div class="creds-item-top">
+            <span class="creds-org">Wapp TV / Canal 14.3</span>
+            <span class="creds-role" data-es="Ingeniero de sonido y director creativo">Sound engineer &amp; creative director</span>
+            <span class="creds-date">2023–2025</span>
+          </div>
+          <p class="creds-desc" data-es="Monitoreé, ejecuté, y dirigí creativamente el sonido de múltiples programas del canal.">Monitored, executed, and creatively directed the sound for multiple programs on the channel.</p>
+        </div>
+        <div class="creds-item">
+          <div class="creds-item-top">
+            <span class="creds-org" data-es="Juegos Panamericanos Santiago 2023 — Canal 14.3">Santiago 2023 Pan American Games — Canal 14.3</span>
+            <span class="creds-role" data-es="Ingeniero de sonido, cobertura de los Juegos">Sound engineer, Games coverage</span>
+            <span class="creds-date">2023</span>
+          </div>
+          <p class="creds-desc" data-es="A cargo del sonido de la cobertura de Canal 14.3 de los Juegos Panamericanos Santiago 2023.">In charge of the sound for Canal 14.3's coverage of the Santiago 2023 Pan American Games.</p>
+        </div>
+        <div class="creds-item">
+          <div class="creds-item-top">
+            <span class="creds-org">Teletón × Canal 14.3</span>
+            <span class="creds-role" data-es="Ingeniero de sonido, campaña">Sound engineer, campaign</span>
+            <span class="creds-date">2023</span>
+          </div>
+          <p class="creds-desc" data-es="Monitoreo y ejecución de sonido para el segmento del canal en apoyo a la campaña de Teletón y Unimarc.">Sound monitoring and execution for the channel's segment supporting the Teletón and Unimarc campaign.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-light" id="ch03">
+      <div class="section-head">
+        <h2 data-es="Sobre mí">About me</h2>
+      </div>
+      <div class="perfil-grid">
+        <div>
+          <p data-es="Tengo relación con el sonido y sus distintas ramas desde que era adolescente. Empecé haciendo pistas de forma independiente y solo por diversión, lo que me llevó a estudiar Ingeniería en Sonido, titulándome de DUOC UC.">I have had a relationship with sound and its different branches since I was a teenager. I started out making tracks independently and just for fun, which led me to study Sound Engineering, graduating from DUOC UC.</p>
+          <p data-es="He acumulado experiencia profesional desde mi primer año de universidad, empezando como diseñador de sonido y compositor freelance. Después de esto conseguí un trabajo junior en un canal de TV local, donde tuve un buen desempeño que me llevó a convertirme en director de sonido de casi todos los programas del canal, y a estar a cargo del sonido de la cobertura del canal de los Juegos Panamericanos Santiago 2023. Estuve en ese rol casi dos años, mientras también tomaba trabajos de shows en vivo en la escena local. En 2025 dejé de trabajar en el canal. Seguí tomando trabajos freelance en distintas áreas, y más tarde ese año conseguí el puesto de Ingeniero Acústico de Terreno en una empresa dedicada a la acústica ambiental y el cumplimiento normativo.">I have accumulated professional experience since my first year of college, starting as a freelance sound designer and composer. After this I got a junior job at a local TV channel, where I performed well enough to become the sound director for almost all of the channel's programs, and to be in charge of sound for the channel's coverage of the Santiago 2023 Pan American Games. I stayed in this role for almost two years, while also taking on live show jobs in the local scene. In 2025 I stopped working at the channel. I still took on freelance jobs in different areas, and later that year I got the Field Acoustic Engineer role at a company dedicated to environmental acoustics and regulatory compliance.</p>
+          <p data-es="Ahora dedico mi tiempo libre a hacer música, diseño de sonido, y trabajo de sonido en general. Normalmente trabajo en música EDM, como Drum and Bass, Brostep, Neurofunk, o House, pero también me gusta explorar otros géneros, como música latina, beats experimentales de rap, o música temática como la que se muestra en la sección de proyectos. Disfruto cada parte de la carrera que elegí, y los videojuegos son uno de los espacios en los que más ganas tengo de empezar a aportar, un medio del que he sido parte como jugador desde que era chico.">Now I dedicate my free time to making music, sound design, and sound work in general. I usually work on EDM music, like Drum and Bass, Brostep, Neurofunk, or House, but I also like to branch into other genres, like Latin music, experimental rap beats, or themed music like the ones shown in the projects section. I enjoy every part of the career I chose, and video games are one of the spaces I'm most excited to start contributing to, a medium I've been part of as a player since I was a little kid.</p>
+        </div>
+        <div class="quick-facts">
+          <div>
+            <div class="f-label" data-es="UBICACIÓN">LOCATION</div>
+            <div class="f-val" data-es="Santiago, Chile — abierto a trabajo remoto">Santiago, Chile — open to remote work</div>
+          </div>
+          <div>
+            <div class="f-label" data-es="FORMACIÓN">EDUCATION</div>
+            <div class="f-val" data-es="Ingeniería en Sonido — DUOC UC (2022–2025)">Sound Engineering — DUOC UC (2022–2025)</div>
+          </div>
+          <div>
+            <div class="f-label" data-es="HERRAMIENTAS">TOOLS</div>
+            <div class="f-val">Ableton Live, FL Studio, Pro Tools, Serum 2</div>
+          </div>
+          <div>
+            <div class="f-label" data-es="IDIOMAS">LANGUAGES</div>
+            <div class="f-val" data-es="Español nativo · Inglés">Native Spanish · English</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ch04" style="border-bottom:none;">
+      <div class="section-head">
+        <h2 data-es="Hablemos">Let's talk</h2>
+      </div>
+      <p class="section-sub" data-es="Disponible para trabajo remoto o presencial.">Available for remote or on-site work.</p>
+
+      <div class="contact-grid">
+        <div class="contact-item">
+          <div class="eyebrow">Email</div>
+          <a href="mailto:go.fuenzalida.acu@gmail.com">go.fuenzalida.acu@gmail.com</a>
+        </div>
+        <div class="contact-item">
+          <div class="eyebrow">LinkedIn</div>
+          <a href="https://www.linkedin.com/in/gonzalo-fuenzalida-88a475380/" target="_blank" rel="noopener" data-es="Ver perfil →">View profile →</a>
+        </div>
+        <div class="contact-item">
+          <div class="eyebrow">Discord</div>
+          <span>4lliask</span>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>GONZALO FUENZALIDA © 2025</span>
+      <span data-es="DISEÑO DE SONIDO E INGENIERÍA DE AUDIO">SOUND DESIGN &amp; AUDIO ENGINEERING</span>
+    </footer>
+  </main>
+
+<script>
+  // Language toggle
+  const translatable = document.querySelectorAll('[data-es]');
+  translatable.forEach(el => { el.dataset.en = el.innerHTML; });
+  let currentLang = 'en';
+  const langToggle = document.getElementById('langToggle');
+  function setLang(lang){
+    translatable.forEach(el => {
+      el.innerHTML = lang === 'es' ? el.dataset.es : el.dataset.en;
+    });
+    document.documentElement.setAttribute('lang', lang);
+    currentLang = lang;
+    langToggle.textContent = lang === 'es' ? 'ES' : 'EN';
+    langToggle.setAttribute('aria-label', lang === 'es' ? 'Switch to English' : 'Cambiar a español');
+  }
+  langToggle.addEventListener('click', () => setLang(currentLang === 'en' ? 'es' : 'en'));
+
+  const links = document.querySelectorAll('.ch-link');
+  const sections = Array.from(links).map(l => document.getElementById(l.dataset.ch));
+  function onScroll(){
+    let current = sections[0];
+    const y = window.scrollY + window.innerHeight * 0.35;
+    sections.forEach(sec => { if(sec && sec.offsetTop <= y) current = sec; });
+    links.forEach(l => l.classList.toggle('active', current && l.dataset.ch === current.id));
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  const canvas = document.getElementById('scope');
+  const ctx = canvas.getContext('2d');
+  let w, h, t = 0;
+  function resize(){
+    const hero = canvas.parentElement;
+    w = canvas.width = hero.clientWidth;
+    h = canvas.height = hero.clientHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function drawWave(offsetY, amp, freq, speed, color, lw){
+    ctx.beginPath();
+    for(let x = 0; x <= w; x += 4){
+      const y = offsetY + Math.sin((x*freq) + t*speed) * amp * Math.sin((x/w)*Math.PI);
+      if(x === 0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lw;
+    ctx.stroke();
+  }
+
+  function frame(){
+    ctx.clearRect(0,0,w,h);
+    const midY = h * 0.55;
+    drawWave(midY, 40, 0.012, 0.9, 'rgba(111,255,176,0.45)', 1.6);
+    drawWave(midY, 20, 0.02, 1.4, 'rgba(255,138,61,0.25)', 1.2);
+    drawWave(midY, 62, 0.006, 0.5, 'rgba(111,255,176,0.13)', 1);
+    t += reduceMotion ? 0 : 1;
+    requestAnimationFrame(frame);
+  }
+  frame();
+</script>
+
+</body>
+</html>
